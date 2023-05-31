@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Vue.js</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.4.0/marked.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1 class="site-name">MarkdownMaker</h1>
+  </header>
+  <br>
+  <div id="app">
+    <div class="leftSidebar">
+      <input type="button" value="タイトル" @:click="addh1">
+      <input type="button" value="サブタイトル" @:click="addh2">
+      <input type="button" value="セクション" @:click="addh3">
+      <input type="button" value="サブセクション1" @:click="addh4">
+      <input type="button" value="サブセクション2" @:click="addh5">
+      <input type="button" value="サブセクション3" @:click="addh6">
+      <div class="box">
+        <div id="editor">
+          
+        </div>
+        <div id="contents">
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        input: "",
+      },
+      computed: {
+        convertMarkdown: function() {
+          return marked(this.input);
+        }
+      }
+    })
+  </script>
+</body>
+</html>
