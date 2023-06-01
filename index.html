@@ -1,47 +1,151 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Vue.js</title>
+  <title>ブログ投稿アプリ</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.4.0/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.7/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-router@3.5.1/dist/vue-router.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
-  <header>
-    <h1 class="site-name">MarkdownMaker</h1>
-  </header>
-  <br>
   <div id="app">
-    <div class="leftSidebar">
-      <input type="button" value="タイトル" @:click="addh1">
-      <input type="button" value="サブタイトル" @:click="addh2">
-      <input type="button" value="セクション" @:click="addh3">
-      <input type="button" value="サブセクション1" @:click="addh4">
-      <input type="button" value="サブセクション2" @:click="addh5">
-      <input type="button" value="サブセクション3" @:click="addh6">
-      <div class="box">
-        <div id="editor">
-          
-        </div>
-        <div id="contents">
-
-        </div>
-      </div>
+    <div class="contents">
+      <router-view></router-view>
     </div>
   </div>
+
+  <template id="blog-form">
+    <form @submit.prevent="addBlogPost">
+      <input type="text" v-model="title" placeholder="タイトル">
+      <textarea v-model="content" placeholder="内容"></textarea>
+      <input type="file" ref="file" @change="onFileChange">
+      <button type="submit">投稿</button>
+    </form>
+  </template>
+
+  <template id="blog-list">
+    <ul>
+      <li v-for="post in blogPosts" :key="post.id" @click="goToDetail(post.id)">
+        {{ post.title }}
+      </li>
+    </ul>
+  </template>
+
+  <template id="blog-detail">
+    <div>
+      <h2>{{ blogPost.title }}</h2>
+      <p style="white-space: pre-line;">{{ blogPost.content }}</p>
+      <img v-if="blogPost.image" :src="blogPost.image">
+    </div>
+  </template>
+
   <script>
-    new Vue({
-      el: '#app',
-      data: {
-        input: "",
+    const Home = {
+      template: `
+        <div>
+          <h1>ブログ投稿アプリ</h1>
+          <router-link to="/post">新規投稿</router-link>
+          <br>
+          <h2>記事一覧</h2>
+          <ul>
+            <li v-for="post in blogPosts" :key="post.id" @click="goToDetail(post.id)">
+              <div id="article">{{ post.title }}</div>
+            </li>
+          </ul>
+        </div>
+      `,
+      data() {
+        return {
+          blogPosts: []
+        };
       },
-      computed: {
-        convertMarkdown: function() {
-          return marked(this.input);
+      created() {
+        axios.get('http://localhost:5000/getPosts') // APIエンドポイントを適切なものに変更してください
+          .then(response => {
+            this.blogPosts = response.data;
+          });
+      },
+      methods: {
+        goToDetail(postId) {
+          this.$router.push(`/post/${postId}`);
         }
       }
-    })
+    };
+
+    const BlogForm = {
+      template: '#blog-form',
+      data() {
+        return {
+          title: '',
+          content: '',
+          file: null
+        };
+      },
+      methods: {
+        async addBlogPost() {
+          let formData = new FormData();
+          formData.append('title', this.title);
+          formData.append('content', this.content);
+          formData.append('file', this.file);
+
+          let response = await axios.post('http://localhost:5000/upload', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+
+          if(response.data.success) {
+            const newPost = {
+              id: Date.now(),
+              title: this.title,
+              content: this.content,
+              image: response.data.imageUrl
+            };
+            this.$root.blogPosts.push(newPost);
+            this.$router.push('/');
+          }
+
+          this.title = '';
+          this.content = '';
+          this.file = null;
+        },
+        onFileChange(e) {
+          this.file = this.$refs.file.files[0];
+        }
+      }
+    };
+    const BlogDetail = {
+      template: '#blog-detail',
+      data() {
+        return {
+          blogPost: {
+            title: '',
+            content: ''
+          }
+        };
+      },
+      created() {
+        const postId = Number(this.$route.params.id);
+        this.blogPost = this.$root.blogPosts.find(post => post.id === postId);
+      }
+    };
+
+    const router = new VueRouter({
+      routes: [
+        { path: '/', component: Home },
+        { path: '/post', component: BlogForm },
+        { path: '/post/:id', component: BlogDetail }
+      ]
+    });
+
+    new Vue({
+      router,
+      data() {
+        return {
+          blogPosts: []
+        };
+      }
+    }).$mount('#app');
   </script>
 </body>
 </html>

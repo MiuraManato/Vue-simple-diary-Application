@@ -1,24 +1,41 @@
-header {
-  background-color: #f2f2f2;
-  border-radius: 10px;
-  padding: 10px;
-  text-align: center;
-}
-
-.site-name {
-  font-family: Arial, sans-serif;
-  font-size: 36px;
-  margin: 0;
-}
-
 body {
-  margin: 40px;
+  font-family: Arial, sans-serif;
+  margin: 0;
   padding: 0;
+  background-color: #f8f8f8;
 }
 
-.box {
-  background-color: #ffffff;
-  border-radius: 10px;
-  padding: 100px;
-  border: 1px solid #565656;
+#app {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1, h2 {
+  color: #333;
+}
+
+#article {
+  cursor: pointer;
+  color: #007BFF;
+}
+
+input[type="text"], textarea {
+  display: block;
+  margin-bottom: 10px;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button[type="submit"] {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
 }
