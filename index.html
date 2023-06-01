@@ -60,8 +60,7 @@
         };
       },
       created() {
-        axios.get('http://localhost:5000/getPosts') // APIエンドポイントを適切なものに変更してください
-          .then(response => {
+        axios.get('http://localhost:5000/getPosts').then(response => {
             this.blogPosts = response.data;
           });
       },
