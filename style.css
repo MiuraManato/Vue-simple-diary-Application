@@ -113,3 +113,11 @@ li:hover {
   color: #777;
   font-size: 0.9em;
 }
+
+#diary-detail-content .date .delete-button {
+  float: right;
+  cursor: pointer;
+  color: #777;
+  font-size: 0.9em;
+  margin-right: 10px;
+}

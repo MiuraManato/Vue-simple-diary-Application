@@ -48,7 +48,7 @@
         <p style="white-space: pre-line;">{{ diaryPost.content }}</p>
         <br>
         <img v-if="diaryPost.file" :src="diaryPost.file">
-        <p class="date">作成日：{{ diaryPost.date }}</p>
+        <p class="date">作成日：{{ diaryPost.date }} <button class="delete-button" @click="deletePost">削除</button></p>
       </div>
     </template>
     <!-- 日記詳細テンプレートここまで -->
@@ -123,8 +123,19 @@
           await axios.get(`http://localhost:5000/getPost/${postId}`).then(response => {
               this.diaryPost = response.data;
             });
+        },
+        methods: {
+        async deletePost() {
+          const postId = this.diaryPost.id;
+          await axios.delete(`http://localhost:5000/deletePost/${postId}`).then(() => {
+            // 削除成功時の処理
+            this.$router.push("/");
+          }).catch(() => {
+            // 削除失敗時の処理
+            alert("削除に失敗しました。");
+          });
         }
-      };
+      }};
 
       const router = new VueRouter({
         routes: [

@@ -74,6 +74,22 @@ def get_post(post_id):
     except:
         return jsonify({"message": "Internal Server Error"}), 500
 
+@app.route("/deletePost/<int:post_id>", methods=["DELETE"])
+def delete_post(post_id):
+    try:
+        with open(posts_file, "r") as f:
+            posts = json.load(f)
+
+        post = next((post for post in posts if post['id'] == post_id), None)
+        if post:
+            posts.remove(post)
+            with open(posts_file, "w") as f:
+                json.dump(posts, f)
+            return jsonify({"message": "Post deleted successfully"})
+        else:
+            return jsonify({"message": "Post not found"}), 404
+    except:
+        return jsonify({"message": "Internal Server Error"}), 500
 
 # エラーハンドリング
 @app.errorhandler(500)
