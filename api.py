@@ -25,6 +25,7 @@ def upload_file():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
+    # タイトル、コンテンツが入力されていなかった場合にエラーを返す
     if "title" not in request.form: return ("Missing title", 400)
     if "content" not in request.form: return ("Missing content", 400)
 
@@ -33,10 +34,10 @@ def upload_file():
 
     post = {"title": title, "content": content, "file": filename if file else None}
 
-    if os.path.exists(posts_file):
+    try:
         with open(posts_file, "r") as f:
             posts = json.load(f)
-    else:
+    except:
         posts = []
 
     posts.append(post)
@@ -48,9 +49,13 @@ def upload_file():
 
 @app.route("/getPosts", methods=["GET"])
 def get_posts():
-    with open(posts_file, "r") as f:
-        posts = json.load(f)
-    return jsonify(posts)
+    # ファイルが存在しない場合には空のリストを返す
+    try:
+        with open(posts_file, "r") as f:
+            posts = json.load(f)
+        return jsonify(posts)
+    except:
+        return jsonify([])
 
 
 @app.errorhandler(500)

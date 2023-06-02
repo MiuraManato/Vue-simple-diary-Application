@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ブログ投稿アプリ</title>
+  <title>日記アプリケーション</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/vue@2.5.7/dist/vue.js"></script>
   <script src="https://unpkg.com/vue-router@3.5.1/dist/vue-router.js"></script>
@@ -14,28 +14,28 @@
     </div>
   </div>
 
-  <template id="blog-form">
-    <form @submit.prevent="addBlogPost">
-      <input type="text" v-model="title" placeholder="タイトル">
+  <template id="diary-form">
+    <form @submit.prevent="adddiaryPost">
+      <input type="text" v-model="title" placeholder="日記タイトル">
       <textarea v-model="content" placeholder="内容"></textarea>
       <input type="file" ref="file" @change="onFileChange">
       <button type="submit">投稿</button>
     </form>
   </template>
 
-  <template id="blog-list">
+  <template id="diary-list">
     <ul>
-      <li v-for="post in blogPosts" :key="post.id" @click="goToDetail(post.id)">
+      <li v-for="post in diaryPosts" :key="post.id" @click="goToDetail(post.id)">
         {{ post.title }}
       </li>
     </ul>
   </template>
 
-  <template id="blog-detail">
+  <template id="diary-detail">
     <div>
-      <h2>{{ blogPost.title }}</h2>
-      <p style="white-space: pre-line;">{{ blogPost.content }}</p>
-      <img v-if="blogPost.image" :src="blogPost.image">
+      <h2>{{ diaryPost.title }}</h2>
+      <p style="white-space: pre-line;">{{ diaryPost.content }}</p>
+      <img v-if="diaryPost.image" :src="diaryPost.image">
     </div>
   </template>
 
@@ -43,12 +43,12 @@
     const Home = {
       template: `
         <div>
-          <h1>ブログ投稿アプリ</h1>
+          <h1>日記アプリケーション</h1>
           <router-link to="/post">新規投稿</router-link>
           <br>
-          <h2>記事一覧</h2>
+          <h2>日記一覧</h2>
           <ul>
-            <li v-for="post in blogPosts" :key="post.id" @click="goToDetail(post.id)">
+            <li v-for="post in diaryPosts" :key="post.id" @click="goToDetail(post.id)">
               <div id="article">{{ post.title }}</div>
             </li>
           </ul>
@@ -56,12 +56,12 @@
       `,
       data() {
         return {
-          blogPosts: []
+          diaryPosts: []
         };
       },
       created() {
         axios.get('http://localhost:5000/getPosts').then(response => {
-            this.blogPosts = response.data;
+            this.diaryPosts = response.data;
           });
       },
       methods: {
@@ -71,8 +71,8 @@
       }
     };
 
-    const BlogForm = {
-      template: '#blog-form',
+    const diaryForm = {
+      template: '#diary-form',
       data() {
         return {
           title: '',
@@ -81,10 +81,11 @@
         };
       },
       methods: {
-        async addBlogPost() {
+        async adddiaryPost() {
           let formData = new FormData();
           formData.append('title', this.title);
           formData.append('content', this.content);
+          formData.append('date', new Date());
           formData.append('file', this.file);
 
           let response = await axios.post('http://localhost:5000/upload', formData, {
@@ -93,17 +94,7 @@
             }
           });
 
-          if(response.data.success) {
-            const newPost = {
-              id: Date.now(),
-              title: this.title,
-              content: this.content,
-              image: response.data.imageUrl
-            };
-            this.$root.blogPosts.push(newPost);
-            this.$router.push('/');
-          }
-
+          this.$router.push('/');
           this.title = '';
           this.content = '';
           this.file = null;
@@ -113,11 +104,11 @@
         }
       }
     };
-    const BlogDetail = {
-      template: '#blog-detail',
+    const diaryDetail = {
+      template: '#diary-detail',
       data() {
         return {
-          blogPost: {
+          diaryPost: {
             title: '',
             content: ''
           }
@@ -125,15 +116,15 @@
       },
       created() {
         const postId = Number(this.$route.params.id);
-        this.blogPost = this.$root.blogPosts.find(post => post.id === postId);
+        this.diaryPost = this.$root.diaryPosts.find(post => post.id === postId);
       }
     };
 
     const router = new VueRouter({
       routes: [
         { path: '/', component: Home },
-        { path: '/post', component: BlogForm },
-        { path: '/post/:id', component: BlogDetail }
+        { path: '/post', component: diaryForm },
+        { path: '/post/:id', component: diaryDetail }
       ]
     });
 
@@ -141,7 +132,7 @@
       router,
       data() {
         return {
-          blogPosts: []
+          diaryPosts: []
         };
       }
     }).$mount('#app');
