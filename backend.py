@@ -34,13 +34,16 @@ def upload_file():
     content = request.form["content"]
     date = datetime.datetime.now().strftime("%Y %m/%d %H:%M")
 
+    id = None
     try:
         with open(posts_file, "r") as f:
             posts = json.load(f)
+            # 最新の投稿以外を削除した場合IDがかぶってしまうバグを修正
+            id = posts[-1]["id"] + 1
     except:
         posts = []
 
-    post = {"id": len(posts)+1, "title": title, "content": content, "date": date, "file": user_path + r'/uploads/' + filename if file else None}
+    post = {"id": id if id is not None else 1, "title": title, "content": content, "date": date, "file": user_path + r'/uploads/' + filename if file else None}
     posts.append(post)
 
     with open(posts_file, "w") as f:
