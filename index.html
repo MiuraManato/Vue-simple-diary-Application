@@ -32,12 +32,15 @@
   </template>
 
   <template id="diary-detail">
-    <div>
+    <div id="diary-detail-content">
       <h2>{{ diaryPost.title }}</h2>
       <p style="white-space: pre-line;">{{ diaryPost.content }}</p>
-      <img v-if="diaryPost.image" :src="diaryPost.image">
+      <br>
+      <img v-if="diaryPost.file" :src="diaryPost.file">
+      <p class="date">作成日：{{ diaryPost.date }}</p>
     </div>
   </template>
+
 
   <script>
     const Home = {
@@ -49,7 +52,7 @@
           <h2>日記一覧</h2>
           <ul>
             <li v-for="post in diaryPosts" :key="post.id" @click="goToDetail(post.id)">
-              <div id="article">{{ post.title }}</div>
+              <div id="article">{{ post.title }}<div class="date">作成日：{{ post.date }}</div></div>
             </li>
           </ul>
         </div>
@@ -85,7 +88,6 @@
           let formData = new FormData();
           formData.append('title', this.title);
           formData.append('content', this.content);
-          formData.append('date', new Date());
           formData.append('file', this.file);
 
           let response = await axios.post('http://localhost:5000/upload', formData, {
@@ -104,6 +106,7 @@
         }
       }
     };
+
     const diaryDetail = {
       template: '#diary-detail',
       data() {
@@ -114,9 +117,11 @@
           }
         };
       },
-      created() {
+      async created() {
         const postId = Number(this.$route.params.id);
-        this.diaryPost = this.$root.diaryPosts.find(post => post.id === postId);
+        await axios.get(`http://localhost:5000/getPost/${postId}`).then(response => {
+            this.diaryPost = response.data;
+          });
       }
     };
 

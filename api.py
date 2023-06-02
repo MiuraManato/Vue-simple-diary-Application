@@ -3,6 +3,7 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import os
 import json
+import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -31,7 +32,7 @@ def upload_file():
 
     title = request.form["title"]
     content = request.form["content"]
-    date = request.form["date"]
+    date = datetime.datetime.now().strftime("%Y %m/%d %H:%M")
 
     try:
         with open(posts_file, "r") as f:
@@ -39,7 +40,7 @@ def upload_file():
     except:
         posts = []
 
-    post = {"id": len(posts)+1, "title": title, "content": content, "date": date, "file": filename if file else None}
+    post = {"id": len(posts)+1, "title": title, "content": content, "date": date, "file": user_path + r'/uploads/' + filename if file else None}
 
     posts.append(post)
 
@@ -50,13 +51,26 @@ def upload_file():
 
 @app.route("/getPosts", methods=["GET"])
 def get_posts():
-    # ファイルが存在しない場合には空のリストを返す
+    # ファイルの内容がない場合には空のリストを返す
     try:
         with open(posts_file, "r") as f:
             posts = json.load(f)
         return jsonify(posts)
     except:
         return jsonify([])
+
+@app.route("/getPost/<int:post_id>", methods=["GET"])
+def get_post(post_id):
+    try:
+        with open(posts_file, "r") as f:
+            posts = json.load(f)
+        post = next((post for post in posts if post['id'] == post_id), None)
+        if post:
+            return jsonify(post)
+        else:
+            return jsonify({"message": "Post not found"}), 404
+    except:
+        return jsonify({"message": "Internal Server Error"}), 500
 
 
 @app.errorhandler(500)
