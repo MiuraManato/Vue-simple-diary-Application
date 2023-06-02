@@ -16,6 +16,14 @@ h1, h2 {
   color: #333;
 }
 
+.back-button {
+  float: right;
+  margin-top: 10px;
+  margin-right: 10px;
+  color: #333;
+  cursor: pointer;
+}
+
 #article {
   cursor: pointer;
   color: #007BFF;
