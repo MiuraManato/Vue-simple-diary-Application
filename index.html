@@ -14,6 +14,21 @@
       </div>
     </div>
 
+    <template id="home">
+      <div>
+        <h1>日記アプリケーション</h1>
+        <router-link to="/post">新規投稿</router-link>
+        <br>
+        <h2>日記一覧</h2>
+        <ul>
+          <li v-for="post in diaryPosts" :key="post.id" @click="goToDetail(post.id)">
+            <div id="article">{{ post.title }}<div class="date">作成日：{{ post.date }}</div></div>
+          </li>
+        </ul>
+      </div>
+    </template>
+
+    <!-- フォームテンプレート -->
     <template id="diary-form">
       <form @submit.prevent="adddiaryPost">
         <router-link to="/" class="back-button">ホームに戻る</router-link>
@@ -23,15 +38,9 @@
         <button type="submit">投稿</button>
       </form>
     </template>
+    <!-- フォームテンプレートここまで -->
 
-    <template id="diary-list">
-      <ul>
-        <li v-for="post in diaryPosts" :key="post.id" @click="goToDetail(post.id)">
-          {{ post.title }}
-        </li>
-      </ul>
-    </template>
-
+    <!-- 日記詳細テンプレート -->
     <template id="diary-detail">
       <div id="diary-detail-content">
         <h2>{{ diaryPost.title }}</h2>
@@ -42,23 +51,12 @@
         <p class="date">作成日：{{ diaryPost.date }}</p>
       </div>
     </template>
-
+    <!-- 日記詳細テンプレートここまで -->
 
     <script>
+      // ホームテンプレート
       const Home = {
-        template: `
-          <div>
-            <h1>日記アプリケーション</h1>
-            <router-link to="/post">新規投稿</router-link>
-            <br>
-            <h2>日記一覧</h2>
-            <ul>
-              <li v-for="post in diaryPosts" :key="post.id" @click="goToDetail(post.id)">
-                <div id="article">{{ post.title }}<div class="date">作成日：{{ post.date }}</div></div>
-              </li>
-            </ul>
-          </div>
-        `,
+        template: "#home",
         data() {
           return {
             diaryPosts: []
@@ -77,30 +75,30 @@
       };
 
       const diaryForm = {
-        template: '#diary-form',
+        template: "#diary-form",
         data() {
           return {
-            title: '',
-            content: '',
+            title: "",
+            content: "",
             file: null
           };
         },
         methods: {
           async adddiaryPost() {
             let formData = new FormData();
-            formData.append('title', this.title);
-            formData.append('content', this.content);
-            formData.append('file', this.file);
+            formData.append("title", this.title);
+            formData.append("content", this.content);
+            formData.append("file", this.file);
 
-            let response = await axios.post('http://localhost:5000/upload', formData, {
+            let response = await axios.post("http://localhost:5000/upload", formData, {
               headers: {
-                'Content-Type': 'multipart/form-data'
+                "Content-Type": "multipart/form-data"
               }
             });
 
-            this.$router.push('/');
-            this.title = '';
-            this.content = '';
+            this.$router.push("/");
+            this.title = "";
+            this.content = "";
             this.file = null;
           },
           onFileChange(e) {
@@ -110,12 +108,12 @@
       };
 
       const diaryDetail = {
-        template: '#diary-detail',
+        template: "#diary-detail",
         data() {
           return {
             diaryPost: {
-              title: '',
-              content: ''
+              title: "",
+              content: ""
             }
           };
         },
@@ -129,9 +127,9 @@
 
       const router = new VueRouter({
         routes: [
-          { path: '/', component: Home },
-          { path: '/post', component: diaryForm },
-          { path: '/post/:id', component: diaryDetail }
+          { path: "/", component: Home },
+          { path: "/post", component: diaryForm },
+          { path: "/post/:id", component: diaryDetail }
         ]
       });
 
@@ -142,7 +140,7 @@
             diaryPosts: []
           };
         }
-      }).$mount('#app');
+      }).$mount("#app");
     </script>
   </body>
 </html>

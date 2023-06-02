@@ -41,7 +41,6 @@ def upload_file():
         posts = []
 
     post = {"id": len(posts)+1, "title": title, "content": content, "date": date, "file": user_path + r'/uploads/' + filename if file else None}
-
     posts.append(post)
 
     with open(posts_file, "w") as f:
@@ -59,11 +58,14 @@ def get_posts():
     except:
         return jsonify([])
 
+# 詳細表示 IDが一致するデータを返すメソッド
 @app.route("/getPost/<int:post_id>", methods=["GET"])
 def get_post(post_id):
     try:
+        # 全件のデータを取得し、変数postsに保存する
         with open(posts_file, "r") as f:
             posts = json.load(f)
+        # postsの中から1件ずつ取り出し、post[id]が一致するものを変数postに入れる
         post = next((post for post in posts if post['id'] == post_id), None)
         if post:
             return jsonify(post)
@@ -73,6 +75,7 @@ def get_post(post_id):
         return jsonify({"message": "Internal Server Error"}), 500
 
 
+# エラーハンドリング
 @app.errorhandler(500)
 def handle_cors_error(e):
     return jsonify({"message": "Internal Server Error"}), 500
