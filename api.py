@@ -10,7 +10,7 @@ CORS(app)
 # アップロードされたファイルを保存するディレクトリ
 # 実行環境に左右されないようにする
 user_path = os.getcwd()
-app.config["UPLOAD_FOLDER"] = user_path + r"\path\to\the\uploads"
+app.config["UPLOAD_FOLDER"] = user_path + r"\uploads"
 
 # 投稿データを保存するファイル
 posts_file = "posts.json"
@@ -31,14 +31,15 @@ def upload_file():
 
     title = request.form["title"]
     content = request.form["content"]
-
-    post = {"title": title, "content": content, "file": filename if file else None}
+    date = request.form["date"]
 
     try:
         with open(posts_file, "r") as f:
             posts = json.load(f)
     except:
         posts = []
+
+    post = {"id": len(posts)+1, "title": title, "content": content, "date": date, "file": filename if file else None}
 
     posts.append(post)
 
