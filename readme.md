@@ -18,6 +18,11 @@ Pythonが複数のバージョン入っている場合は以下の通りです
 $ py -3.10 -m pip install requirements.txt
 ```
 
+## 起動する
+任意の方法でbackend.pyを起動します
+
+これにより外部ファイルを使用できるようになります
+
 
 ## 参考一覧
 [バックエンドとの接続](https://reffect.co.jp/vue/vue-axios-learn)
