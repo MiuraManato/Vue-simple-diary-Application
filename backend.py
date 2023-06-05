@@ -10,11 +10,12 @@ CORS(app)
 
 # アップロードされたファイルを保存するディレクトリ
 # 実行環境に左右されないようにする
-user_path = os.getcwd()
-app.config["UPLOAD_FOLDER"] = user_path + r"\uploads"
+files_path = (__file__).split("backend.py")[0]
+user_path = files_path + r"\uploads"
+app.config["UPLOAD_FOLDER"] = user_path
 
 # 投稿データを保存するファイル
-posts_file = "posts.json"
+posts_file = files_path + r"\posts.json"
 
 # POSTメソッドで投稿されたデータの処理
 @app.route("/upload", methods=["POST"])
@@ -43,7 +44,7 @@ def upload_file():
     except:
         posts = []
 
-    post = {"id": id if id is not None else 1, "title": title, "content": content, "date": date, "file": user_path + r'/uploads/' + filename if file else None}
+    post = {"id": id if id is not None else 1, "title": title, "content": content, "date": date, "file": user_path + r'/' + filename if file else None}
     posts.append(post)
 
     with open(posts_file, "w") as f:
