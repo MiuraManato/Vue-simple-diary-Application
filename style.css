@@ -24,6 +24,12 @@ h1, h2 {
   cursor: pointer;
 }
 
+.ex-link {
+  float : right;
+  margin-right: 10px;
+  color: #696969;
+}
+
 #article {
   cursor: pointer;
   color: #007BFF;
