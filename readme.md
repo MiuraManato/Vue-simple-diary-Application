@@ -28,5 +28,3 @@ $ py -3.10 -m pip install requirements.txt
 [バックエンドとの接続](https://reffect.co.jp/vue/vue-axios-learn)
 
 [実行環境差異を無くす](https://chayarokurokuro.hatenablog.com/entry/2021/01/17/234715)
-
-[わからないところ聞いた](https://chat.openai.com/share/a3a8c4e2-e241-49da-aa11-9d03b5a7d4fa)
