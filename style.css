@@ -34,6 +34,11 @@ h1, h2 {
   text-align: right;
 }
 
+.error {
+  color: red;
+  font-size: 1.5em;
+}
+
 input[type="text"] {
   display: block;
   margin-bottom: 10px;
