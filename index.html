@@ -14,6 +14,7 @@
       </div>
     </div>
 
+    <!-- ホームテンプレート -->
     <template id="home">
       <div>
         <h1>日記アプリケーション</h1>
@@ -24,9 +25,11 @@
           <li v-for="post in diaryPosts" :key="post.id" @click="goToDetail(post.id)">
             <div id="article">{{ post.title }}<div class="date">作成日：{{ post.date }}</div></div>
           </li>
+          <p v-if="!diaryPosts.length">日記はまだありません。<router-link to="/post">新規投稿</router-link>してください</p>
         </ul>
       </div>
     </template>
+    <!-- ホームテンプレートここまで -->
 
     <!-- 投稿フォームテンプレート -->
     <template id="diary-form">
