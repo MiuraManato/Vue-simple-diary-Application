@@ -25,6 +25,10 @@ $ py -3.10 -m pip install requirements.txt
 
 
 ## 参考一覧
-[バックエンドとの接続](https://reffect.co.jp/vue/vue-axios-learn)
+[バックエンドとの接続](https://reffect.co.jp/vue/vue-axios-learn "Reffect")
 
-[実行環境差異を無くす](https://chayarokurokuro.hatenablog.com/entry/2021/01/17/234715)
+[実行環境差異を無くす](https://chayarokurokuro.hatenablog.com/entry/2021/01/17/234715 "はてなブログ")
+
+[Vue2 vue-router](https://qiita.com/JetNel0/items/2ce317fdf4abbb89801e "Qiita")
+
+[Vue2 template](https://iwatani.tv/programming/vuejs-template/#st-toc-h-6)
