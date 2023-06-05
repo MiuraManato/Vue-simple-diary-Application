@@ -26,6 +26,7 @@
             <div id="article">{{ post.title }}<div class="date">作成日：{{ post.date }}</div></div>
           </li>
           <p v-if="!diaryPosts.length">日記はまだありません。<router-link to="/post">新規投稿</router-link>してください</p>
+          <p v-if="error" class="error">バックエンドサーバーが起動していません。起動してから再度実行してください</p>
         </ul>
       </div>
     </template>
@@ -62,13 +63,20 @@
         template: "#home",
         data() {
           return {
-            diaryPosts: []
+            diaryPosts: [],
+            error: false
           };
         },
-        created() {
-          axios.get("http://localhost:5000/getPosts").then(response => {
-              this.diaryPosts = response.data;
-            });
+        async created() {
+          try {
+            const response = await axios.get("http://localhost:5000/getPosts");
+            this.diaryPosts = response.data;
+          } catch (error) {
+            this.error = true;
+          }
+          // axios.get("http://localhost:5000/getPosts").then(response => {
+              // this.diaryPosts = response.data;
+            // });
         },
         methods: {
           goToDetail(postId) {
@@ -125,7 +133,7 @@
           const postId = Number(this.$route.params.id);
           await axios.get(`http://localhost:5000/getPost/${postId}`).then(response => {
               this.diaryPost = response.data;
-            });
+            })
         },
         methods: {
         async deletePost() {
