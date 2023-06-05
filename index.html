@@ -39,7 +39,7 @@
         <router-link to="/" class="back-button">ホームに戻る</router-link>
         <input type="text" v-model="title" placeholder="日記タイトル">
         <textarea v-model="content" placeholder="内容"></textarea>
-        <input type="file" ref="file" @change="onFileChange">
+        <input type="file" accept="image/*" ref="file" @change="onFileChange">
         <button type="submit">投稿</button>
       </form>
     </template>
