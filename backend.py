@@ -8,9 +8,9 @@ import datetime
 app = Flask(__name__)
 CORS(app)
 
-# アップロードされたファイルを保存するディレクトリ
-# 実行環境に左右されないようにする
+# backend.py配下までのファイル
 files_path = (__file__).split("backend.py")[0]
+
 user_path = files_path + r"\uploads"
 app.config["UPLOAD_FOLDER"] = user_path
 
@@ -27,13 +27,13 @@ def upload_file():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
-    # タイトル、コンテンツが入力されていなかった場合にエラーを返す
+    # タイトル、コンテンツが入力されていなかった場合にそれぞれエラーを返す
     if "title" not in request.form: return ("Missing title", 400)
     if "content" not in request.form: return ("Missing content", 400)
 
     title = request.form["title"]
     content = request.form["content"]
-    date = datetime.datetime.now().strftime("%Y %m/%d %H:%M")
+    date = datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
 
     id = None
     try:
