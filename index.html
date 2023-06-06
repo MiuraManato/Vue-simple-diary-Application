@@ -24,7 +24,7 @@
         <h2>日記一覧</h2>
         <ul>
           <li v-for="post in diaryPosts" :key="post.id" @click="goToDetail(post.id)">
-            <div id="article">{{ post.title }}<div class="date">作成日：{{ post.date }}</div></div>
+            <div id="article">{{ post.title }}<div class="date">作成日：{{ post.created_date }}<div v-if="post.last_update != post.created_date" class="date">最終更新日：{{ post.last_update }}</div></div></div>
           </li>
           <p v-if="!diaryPosts.length">日記はまだありません。<router-link to="/post">新規投稿</router-link>してください</p>
         </ul>
@@ -52,7 +52,8 @@
         <p style="white-space: pre-line;">{{ diaryPost.content }}</p>
         <br>
         <img v-if="diaryPost.file" :src="diaryPost.file">
-        <p class="date">作成日：{{ diaryPost.date }} <button class="edit-button" @click="$router.push(`/edit/${diaryPost.id}`)">編集</button> <button class="delete-button" @click="deletePost">削除</button></p>
+        <p class="date" v-if="diaryPost.last_update == diaryPost.created_date">作成日：{{ diaryPost.created_date }} <button class="edit-button" @click="$router.push(`/edit/${diaryPost.id}`)">編集</button> <button class="delete-button" @click="deletePost">削除</button></p>
+        <p class="date" v-else>最終更新日：{{ diaryPost.last_update }} <button class="edit-button" @click="$router.push(`/edit/${diaryPost.id}`)">編集</button> <button class="delete-button" @click="deletePost">削除</button></p>
       </div>
     </template>
     <!-- 日記詳細テンプレートここまで -->

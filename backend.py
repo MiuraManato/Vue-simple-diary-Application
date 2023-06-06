@@ -44,7 +44,7 @@ def upload_file():
     except:
         posts = []
 
-    post = {"id": id if id is not None else 1, "title": title, "content": content, "date": date, "file": user_path + r'/' + filename if file else None}
+    post = {"id": id if id is not None else 1, "title": title, "content": content, "created_date": date, "last_update": date , "file": user_path + r'/' + filename if file else None}
     posts.append(post)
 
     with open(posts_file, "w") as f:
@@ -75,7 +75,7 @@ def edit_post(post_id):
             if post['id'] == post_id:
                 post['title'] = title
                 post['content'] = content
-                post['date'] = date
+                post['last_update'] = date
                 if filename:  # filenameが存在するときのみ、fileパスを更新
                     post['file'] = user_path + r'/' + filename
                 break
