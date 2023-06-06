@@ -52,17 +52,32 @@
         <p style="white-space: pre-line;">{{ diaryPost.content }}</p>
         <br>
         <img v-if="diaryPost.file" :src="diaryPost.file">
-        <p class="date">作成日：{{ diaryPost.date }} <button class="delete-button" @click="deletePost">削除</button></p>
+        <p class="date">作成日：{{ diaryPost.date }} <button class="edit-button" @click="$router.push(`/edit/${diaryPost.id}`)">編集</button> <button class="delete-button" @click="deletePost">削除</button></p>
       </div>
     </template>
     <!-- 日記詳細テンプレートここまで -->
 
+    <template id="diary-edit">
+      <div id="diary-edit-content">
+        <router-link to="/" class="back-button">ホームに戻る</router-link>
+        <h2>日記編集</h2>
+        <form @submit.prevent="editPost">
+          <input type="text" v-model="diaryPost.title" placeholder="日記タイトル">
+          <textarea v-model="diaryPost.content" placeholder="内容"></textarea>
+          <input type="file" accept="image/*" ref="file" @change="onFileChange">
+          <button type="submit">更新</button>
+        </form>
+      </div>
+    </template>
+
+    <!-- エラーメッセージテンプレート -->
     <template id="error-disp">
       <div>
         <p class="error">バックエンドサーバーが起動していません。起動してから再度実行してください。</p>
         <button class="reload-button"><router-link to="/" >再読込み</router-link></button>
       </div>
     </template>
+    <!-- エラーメッセージテンプレートここまで -->
 
     <script>
       // ホームテンプレート
@@ -131,6 +146,7 @@
             }
           };
         },
+
         async created() {
           const postId = Number(this.$route.params.id);
           await axios.get(`http://localhost:5000/getPost/${postId}`).then(response => {
@@ -151,13 +167,56 @@
       }};
       const errorDisp = {
         template: "#error-disp"
-      }
+      };
+
+      const diaryEdit = {
+        template: "#diary-edit",
+        data() {
+          return {
+            diaryPost: {
+              id: null,
+              title: "",
+              content: "",
+              file: null
+            }
+          }
+        },
+        async created() {
+          const postId = Number(this.$route.params.id);
+          await axios.get(`http://localhost:5000/getPost/${postId}`).then(response => {
+            this.diaryPost.id = response.data.id;
+            this.diaryPost.title = response.data.title;
+            this.diaryPost.content = response.data.content;
+            this.diaryPost.file = response.data.file;
+          })
+        },
+        methods: {
+          async editPost() {
+            if (this.diaryPost.title === "" || this.diaryPost.content === "") return;
+            let formData = new FormData();
+            formData.append("title", this.diaryPost.title);
+            formData.append("content", this.diaryPost.content);
+            formData.append("file", this.diaryPost.file);
+
+            await axios.put(`http://localhost:5000/editPost/${this.diaryPost.id}`, formData, {
+              headers: {
+                "Content-Type": "multipart/form-data"
+              }
+            });
+            this.$router.push(`/post/${this.diaryPost.id}`);
+          },
+          onFileChange(e) {
+            this.diaryPost.file = this.$refs.file.files[0];
+          }
+        }
+      };
 
       const router = new VueRouter({
         routes: [
           { path: "/", component: Home },
           { path: "/post", component: diaryForm },
           { path: "/post/:id", component: diaryDetail },
+          { path: "/edit/:id", component: diaryEdit },
           { path: "/github", beforeEnter() {
             window.location = "https://www.github.com/MiuraManato/Vue-simple-diary-Application";
           }},

@@ -52,6 +52,42 @@ def upload_file():
 
     return ("Post created successfully", 200)
 
+@app.route("/editPost/<int:post_id>", methods=["PUT"])
+def edit_post(post_id):
+    if "title" not in request.form: return ("Missing title", 400)
+    if "content" not in request.form: return ("Missing content", 400)
+
+    title = request.form["title"]
+    content = request.form["content"]
+    date = datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
+
+    # 新しいファイルがアップロードされた場合の処理
+    filename = None
+    if "file" in request.files:
+        file = request.files["file"]
+        if file.filename != "":
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+
+    with open(posts_file, "r") as f:
+        posts = json.load(f)
+        for post in posts:
+            if post['id'] == post_id:
+                post['title'] = title
+                post['content'] = content
+                post['date'] = date
+                if filename:  # filenameが存在するときのみ、fileパスを更新
+                    post['file'] = user_path + r'/' + filename
+                break
+        else:  # for/else loopを使ってpostが見つからなかった場合のエラーハンドリング
+            return jsonify({"message": "Post not found"}), 404
+
+        with open(posts_file, "w") as f:
+            json.dump(posts, f)
+        
+        return jsonify({"message": "Post edited successfully"}), 200
+
+
 @app.route("/getPosts", methods=["GET"])
 def get_posts():
     # ファイルの内容がない場合には空のリストを返す
