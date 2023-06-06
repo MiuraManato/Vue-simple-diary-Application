@@ -27,7 +27,6 @@
             <div id="article">{{ post.title }}<div class="date">作成日：{{ post.date }}</div></div>
           </li>
           <p v-if="!diaryPosts.length">日記はまだありません。<router-link to="/post">新規投稿</router-link>してください</p>
-          <p v-if="error" class="error">バックエンドサーバーが起動していません。起動してから再度実行してください。</p>
         </ul>
       </div>
     </template>
@@ -58,6 +57,13 @@
     </template>
     <!-- 日記詳細テンプレートここまで -->
 
+    <template id="error-disp">
+      <div>
+        <p class="error">バックエンドサーバーが起動していません。起動してから再度実行してください。</p>
+        <button class="reload-button"><router-link to="/" >再読込み</router-link></button>
+      </div>
+    </template>
+
     <script>
       // ホームテンプレート
       const Home = {
@@ -74,6 +80,7 @@
             this.diaryPosts = response.data;
           } catch (error) {
             this.error = true;
+            this.$router.push("/error");
           }
         },
         methods: {
@@ -142,6 +149,9 @@
           });
         }
       }};
+      const errorDisp = {
+        template: "#error-disp"
+      }
 
       const router = new VueRouter({
         routes: [
@@ -150,7 +160,8 @@
           { path: "/post/:id", component: diaryDetail },
           { path: "/github", beforeEnter() {
             window.location = "https://www.github.com/MiuraManato/Vue-simple-diary-Application";
-          }}
+          }},
+          { path: "/error", component: errorDisp}
         ]
       });
 

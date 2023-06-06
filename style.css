@@ -132,3 +132,9 @@ li:hover {
   font-size: 0.9em;
   margin-right: 10px;
 }
+
+#error-disp .reload-button {
+  cursor: pointer;
+  color: #777;
+  font-size: 0.9em;
+}
