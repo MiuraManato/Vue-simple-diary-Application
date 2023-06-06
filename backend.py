@@ -84,7 +84,7 @@ def edit_post(post_id):
 
         with open(posts_file, "w") as f:
             json.dump(posts, f)
-        
+
         return jsonify({"message": "Post edited successfully"}), 200
 
 
